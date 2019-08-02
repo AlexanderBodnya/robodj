@@ -101,7 +101,7 @@ class Messaging(BotHelper):
         commands = {
             '/start': self.start_message,
             '/upvote': self.upvote,
-            '/downvote': self.downvote,
+            '/recant_vote': self.recant_vote,
             '/suggest': self.suggest,
             '/get_list': self.get_list,
           }
@@ -163,8 +163,19 @@ class Messaging(BotHelper):
         
 
     @exception(logger)
-    def downvote(self, *args, **kwargs):
-        self.sendMessage(self._chat_id, 'Not implemented [downvote] method')
+    def recant_vote(self, *args, **kwargs):
+        try:
+            song_id = int(args[0][0])
+            resp = self.db.get_song_name_by_id(song_id)
+            logger.info('Song name is {}'.format(resp))
+            voter_id = self.get_user_id()
+            song_name = resp[0]
+            vote_pk = self.vote_hash(song_name, voter_id)
+            self.db.recant_vote(vote_pk)
+            self.db.destroy_session()
+            self.sendMessage(self._chat_id, '{} отозвал(а) свой голос за песню {}!'.format(self.get_name(), song_name))
+        except:
+            self.sendMessage(self._chat_id, 'Пожалуйста укажите порядковый номер песни!')
 
 
     @exception(logger)

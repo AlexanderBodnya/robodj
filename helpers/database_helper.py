@@ -72,4 +72,9 @@ class SQLOperations():
         resp = self.session.execute('SELECT song_name FROM songs_list where song_id = {}'.format(song_id)).fetchone()
         return resp
 
+    @exception(logger)
+    def recant_vote(self, vote_id):
+        self.session.execute('delete FROM vote_log where vote_id = {}'.format(vote_id))
+        return None
+
  
