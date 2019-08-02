@@ -57,8 +57,9 @@ class SQLOperations():
 
     @exception(logger)
     def get_list(self):
-        s = text('SELECT song_name, COUNT(*) AS `num` FROM vote_log GROUP BY song_name')
+        s = text('SELECT song_name, COUNT(*) FROM vote_log GROUP BY song_name')
         resp = self.session.execute(s)
+        logger.info(resp)
         for item in resp:
             logger.info(item)
 

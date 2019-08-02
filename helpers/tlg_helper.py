@@ -87,7 +87,10 @@ class Messaging(BotHelper):
     def __init__(self, token, message, database_url):
         super(Messaging, self).__init__(token)
         self.message = message
-        self._chat_id = self.message['message']['chat']['id']
+        try:
+            self._chat_id = self.message['message']['chat']['id']
+        except KeyError:
+            self._chat_id = self.message['editted_message']['chat']['id']
         self.db_url = database_url
         
 
