@@ -158,12 +158,19 @@ class Messaging(BotHelper):
     @exception(logger)
     def suggest(self, *args, **kwargs):
         logger.info('Args are {}'.format(args[0]))
-        # db = self.database_connect()
-        for arg in args[0]:
-            self.sendMessage(self._chat_id, arg)
+        db = self.database_connect()
+        song_name = ' '.join(args[0])
+        voter_id = self.get_user_id()
+        vote_pk = self.vote_hash(song_name, voter_id)
+        db.add_data('VoteLog', vote_id=vote_pk, song_name=song_name, voter_id=voter_id)
+        db.destroy_session()
+        self.sendMessage(self._chat_id, '{} добавил в голосование песню {}!'.format(self.get_name(), song_name))
 
     @exception(logger)
     def get_list(self, *args, **kwargs):
+        db = self.database_connect()
+        db.get_list()
+        db.destroy_session()
         self.sendMessage(self._chat_id, 'Not implemented [get_list] method')
 
     @exception(logger)

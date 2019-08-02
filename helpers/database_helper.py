@@ -2,6 +2,7 @@ import sqlite3
 from helpers.log_helper import add_logger, exception
 from sqlalchemy import Column, String, ForeignKey, Integer, Index, Float, or_, and_
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
@@ -17,7 +18,7 @@ class VoteLog(base):
 
     vote_id = Column(String, nullable=False, primary_key=True)
     song_name = Column(String, nullable=False)
-    voter_name = Column(String, nullable=False)
+    voter_id = Column(String, nullable=False)
     __table_args__ = (
         Index('ix_vote_id', vote_id),
     )
@@ -53,5 +54,12 @@ class SQLOperations():
     def drop_database(self):
         base.metadata.reflect(bind=self.engine)
         base.metadata.drop_all(bind=self.engine)
+
+    @exception(logger)
+    def get_list(self):
+        s = text('SELECT song_name, COUNT(*) AS `num` FROM vote_log GROUP BY song_name')
+        resp = self.session.execute(s)
+        for item in resp:
+            logger.info(item)
 
  
