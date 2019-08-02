@@ -14,6 +14,8 @@ def on_message():
 
     body = flask.request.get_json()
     print(" [x] Received %r" % body)
+    msg = tlg.Messaging(conf.TOKEN, body, conf.DATABASE)
+    msg.command_execute()
     return ('OK', 200)
 
 
