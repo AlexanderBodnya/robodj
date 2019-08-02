@@ -156,6 +156,7 @@ class Messaging(BotHelper):
             song_name = resp[0]
             vote_pk = self.vote_hash(song_name, voter_id)
             self.db.add_data('VoteLog', vote_id=vote_pk, song_name=song_name, voter_id=voter_id)
+            self.db.destroy_session()
             self.sendMessage(self._chat_id, '{} проголосовал(а) за песню {}!'.format(self.get_name(), song_name))
         except:
             self.sendMessage(self._chat_id, 'Пожалуйста укажите порядковый номер песни!')
