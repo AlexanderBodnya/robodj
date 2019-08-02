@@ -148,10 +148,12 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def upvote(self, *args, **kwargs):
-        logger.info(args[0][0])
-        if isinstance(args[0][0], int):
-            resp = self.db.get_song_name_by_id(args[0][0])
+        try:
+            song_id = int(args[0][0])
+            resp = self.db.get_song_name_by_id(song_id)
             logger.info('Song name is {}'.format(resp))
+        except:
+            self.sendMessage(self._chat_id, 'Пожалуйста укажите порядковый номер песни!')
         self.sendMessage(self._chat_id, 'Not implemented [upvote] method')
 
     @exception(logger)
