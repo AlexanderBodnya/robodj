@@ -1,0 +1,5 @@
+configs/config.py
+venv/
+.vscode/settings.json
+helpers/__pycache__/
+configs/__pycache__/
