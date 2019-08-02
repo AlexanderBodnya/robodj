@@ -62,6 +62,6 @@ class SQLOperations():
         logger.info('Executing SQL')
         logger.info(resp)
         for item in resp:
-            logger.info(item)
+            logger.info(item.song_name)
 
  
