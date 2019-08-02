@@ -33,6 +33,7 @@ class SQLOperations():
         self.engine = create_engine(db_url)
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
+        base.metadata.create_all(bind=self.engine)
 
     @exception(logger)
     def destroy_session(self):
