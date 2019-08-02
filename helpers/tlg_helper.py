@@ -108,7 +108,9 @@ class Messaging(BotHelper):
         command, *args = self.get_command()
         if command:
             result = commands[command](*args)
-        return result
+            return result
+        else:
+            return None
 
     @exception(logger)
     def get_name(self, *args, **kwargs):
