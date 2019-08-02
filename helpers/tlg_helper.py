@@ -91,12 +91,9 @@ class Messaging(BotHelper):
             self._chat_id = self.message['message']['chat']['id']
         except KeyError:
             self._chat_id = self.message['edited_message']['chat']['id']
-        self.db_url = database_url
+        self.db =  SQLOperations(self.db_url)
         
 
-    @exception(logger)
-    def database_connect(self):
-        return SQLOperations(self.db_url)
 
 
     @exception(logger)
@@ -161,20 +158,22 @@ class Messaging(BotHelper):
     @exception(logger)
     def suggest(self, *args, **kwargs):
         logger.info('Args are {}'.format(args[0]))
-        db = self.database_connect()
         song_name = ' '.join(args[0])
         voter_id = self.get_user_id()
         vote_pk = self.vote_hash(song_name, voter_id)
-        db.add_data('VoteLog', vote_id=vote_pk, song_name=song_name, voter_id=voter_id)
-        db.destroy_session()
-        self.sendMessage(self._chat_id, '{} добавил в голосование песню {}!'.format(self.get_name(), song_name))
+        self.db.add_data('VoteLog', vote_id=vote_pk, song_name=song_name, voter_id=voter_id)
+        self.db.destroy_session()
+        self.sendMessage(self._chat_id, '{} добавил(а) в голосование песню {}!'.format(self.get_name(), song_name))
 
     @exception(logger)
     def get_list(self, *args, **kwargs):
-        db = self.database_connect()
-        db.get_list()
-        db.destroy_session()
-        self.sendMessage(self._chat_id, 'Not implemented [get_list] method')
+        text = ''
+        resp = self.db.get_list()
+        self.db.destroy_session()
+        for item in resp:
+            line = ' - '.join(item) + '\n'
+            text += line
+        self.sendMessage(self._chat_id, text)
 
     @exception(logger)
     def vote_hash(self, *args):
