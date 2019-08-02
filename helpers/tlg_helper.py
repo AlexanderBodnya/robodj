@@ -149,7 +149,7 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def start_message(self, *args, **kwargs):
-        self.sendMessage(self._chat_id, 'Вас привествует бот для предложения песен на афтерпати! Для того чтобы узнать какие песни уже успели предложить воспользуйтесь командой:\n\t/get_list\nДля того чтобы предложить свою песню воспользуйтесь командой:\n\t/suggest Название Песни\nДля того чтобы проголосовать за песню из списка воспользуйтесь командой:\n\t/upvote <порядковый номер песни>\nДля того чтобы отозвать свой голос воспользуйтесь командой:\n\t/recant_vote <порядковый номер песни>\nЕсли за песню не будет одного голоса она автоматически пропадет из списка!')
+        self.sendMessage(self._chat_id, 'Вас привествует бот для предложения песен на афтапати! Для того, чтобы узнать, какие песни уже успели предложить, воспользуйтесь командой:\n\t/get_list\nДля того, чтобы предложить свою песню, воспользуйтесь командой:\n\t/suggest Название Песни\nДля того, чтобы проголосовать за песню из списка воспользуйтесь командой:\n\t/upvote <порядковый номер песни>\nДля того, чтобы отозвать свой голос, воспользуйтесь командой:\n\t/recant_vote <порядковый номер песни>\nЕсли за песню не будет одного голоса, она автоматически пропадет из списка!')
 
     @exception(logger)
     def upvote(self, *args, **kwargs):
@@ -164,7 +164,7 @@ class Messaging(BotHelper):
             self.db.destroy_session()
             self.sendMessage(self._chat_id, '{} проголосовал(а) за песню {}!'.format(self.get_name(), song_name))
         except:
-            self.sendMessage(self._chat_id, 'Пожалуйста укажите существующий порядковый номер песни!')
+            self.sendMessage(self._chat_id, 'Пожалуйста, укажите существующий порядковый номер песни!')
         
 
     @exception(logger)
@@ -180,7 +180,7 @@ class Messaging(BotHelper):
             self.db.destroy_session()
             self.sendMessage(self._chat_id, '{} отозвал(а) свой голос за песню {}!'.format(self.get_name(), song_name))
         except:
-            self.sendMessage(self._chat_id, 'Пожалуйста укажите существующий порядковый номер песни!')
+            self.sendMessage(self._chat_id, 'Пожалуйста, укажите существующий порядковый номер песни!')
 
 
     @exception(logger)
