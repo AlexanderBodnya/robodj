@@ -157,6 +157,7 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def suggest(self, *args, **kwargs):
+        logger.info('Args are {}'.format(args))
         # db = self.database_connect()
         for arg in args:
             self.sendMessage(self._chat_id, arg)
