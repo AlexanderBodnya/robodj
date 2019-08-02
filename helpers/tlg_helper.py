@@ -144,7 +144,7 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def start_message(self, *args, **kwargs):
-        self.sendMessage(self._chat_id, 'Вас привествует бот для предложения песен на афтерпати! Для того чтобы узнать какие песни уже успели предложить воспользуйтесь командой:\n\t/get_list\nДля того чтобы предложить свою песню воспользуйтесь командой:\n\t/suggest Название Песни\nДля того чтобы проголосовать за песню из списк воспользуйтесь командой:\n\t/upvote <порядковый номер песни>\nДля того чтобы отозвать свой голос воспользуйтесь командой:\n\t/recant_vote <порядкоый номер песни>\nЕсли за песню не будет одного голоса она автоматически пропадет из списка!')
+        self.sendMessage(self._chat_id, 'Вас привествует бот для предложения песен на афтерпати! Для того чтобы узнать какие песни уже успели предложить воспользуйтесь командой:\n\t/get_list\nДля того чтобы предложить свою песню воспользуйтесь командой:\n\t/suggest Название Песни\nДля того чтобы проголосовать за песню из списка воспользуйтесь командой:\n\t/upvote <порядковый номер песни>\nДля того чтобы отозвать свой голос воспользуйтесь командой:\n\t/recant_vote <порядковый номер песни>\nЕсли за песню не будет одного голоса она автоматически пропадет из списка!')
 
     @exception(logger)
     def upvote(self, *args, **kwargs):
@@ -159,7 +159,7 @@ class Messaging(BotHelper):
             self.db.destroy_session()
             self.sendMessage(self._chat_id, '{} проголосовал(а) за песню {}!'.format(self.get_name(), song_name))
         except:
-            self.sendMessage(self._chat_id, 'Пожалуйста укажите порядковый номер песни!')
+            self.sendMessage(self._chat_id, 'Пожалуйста укажите существующий порядковый номер песни!')
         
 
     @exception(logger)
@@ -175,19 +175,23 @@ class Messaging(BotHelper):
             self.db.destroy_session()
             self.sendMessage(self._chat_id, '{} отозвал(а) свой голос за песню {}!'.format(self.get_name(), song_name))
         except:
-            self.sendMessage(self._chat_id, 'Пожалуйста укажите порядковый номер песни!')
+            self.sendMessage(self._chat_id, 'Пожалуйста укажите существующий порядковый номер песни!')
 
 
     @exception(logger)
     def suggest(self, *args, **kwargs):
-        logger.info('Args are {}'.format(args[0]))
-        song_name = ' '.join(args[0])
-        voter_id = self.get_user_id()
-        vote_pk = self.vote_hash(song_name, voter_id)
-        self.db.add_data('VoteLog', vote_id=vote_pk, song_name=song_name, voter_id=voter_id)
-        self.db.add_data('SongsList', song_name=song_name)
-        self.db.destroy_session()
-        self.sendMessage(self._chat_id, '{} добавил(а) в голосование песню {}!'.format(self.get_name(), song_name))
+        try:
+            logger.info('Args are {}'.format(args[0]))
+            song_name = ' '.join(args[0])
+            if song_name:
+                voter_id = self.get_user_id()
+                vote_pk = self.vote_hash(song_name, voter_id)
+                self.db.add_data('VoteLog', vote_id=vote_pk, song_name=song_name, voter_id=voter_id)
+                self.db.add_data('SongsList', song_name=song_name)
+                self.db.destroy_session()
+                self.sendMessage(self._chat_id, '{} добавил(а) в голосование песню {}!'.format(self.get_name(), song_name))
+        except:
+            self.sendMessage(self._chat_id, 'Укажите название песни!')
 
     @exception(logger)
     def get_list(self, *args, **kwargs):
