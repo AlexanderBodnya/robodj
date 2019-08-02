@@ -99,11 +99,11 @@ class Messaging(BotHelper):
     @exception(logger)
     def command_execute(self):
         commands = {
-            'start': self.start_message,
-            'upvote': self.upvote,
-            'downvote': self.downvote,
-            'suggest': self.suggest,
-            'get_list': self.get_list,
+            '/start': self.start_message,
+            '/upvote': self.upvote,
+            '/downvote': self.downvote,
+            '/suggest': self.suggest,
+            '/get_list': self.get_list,
           }
         command, args = self.get_command()
         result = commands[command](args)
