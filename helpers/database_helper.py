@@ -64,7 +64,7 @@ class SQLOperations():
 
     @exception(logger)
     def get_list(self):
-        resp = self.session.execute('SELECT song_id, song_name, COUNT(*) FROM vote_log LEFT JOIN songs_list ON vote_log.song_name = songs_list.song_name GROUP BY song_name').fetchall()
+        resp = self.session.execute('SELECT song_id, vote_log.song_name, COUNT(*) FROM vote_log LEFT JOIN songs_list ON vote_log.song_name = songs_list.song_name GROUP BY song_name').fetchall()
         return resp
 
  
