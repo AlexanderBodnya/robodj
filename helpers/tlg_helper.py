@@ -90,7 +90,7 @@ class Messaging(BotHelper):
         try:
             self._chat_id = self.message['message']['chat']['id']
         except KeyError:
-            self._chat_id = self.message['editted_message']['chat']['id']
+            self._chat_id = self.message['edited_message']['chat']['id']
         self.db_url = database_url
         
 
