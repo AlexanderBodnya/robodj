@@ -162,6 +162,7 @@ class Messaging(BotHelper):
         voter_id = self.get_user_id()
         vote_pk = self.vote_hash(song_name, voter_id)
         self.db.add_data('VoteLog', vote_id=vote_pk, song_name=song_name, voter_id=voter_id)
+        self.db.add_data('SongsList', song_name=song_name)
         self.db.destroy_session()
         self.sendMessage(self._chat_id, '{} добавил(а) в голосование песню {}!'.format(self.get_name(), song_name))
 
