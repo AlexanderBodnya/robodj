@@ -64,7 +64,7 @@ class SQLOperations():
 
     @exception(logger)
     def get_list(self):
-        resp = self.session.execute('SELECT song_id, vote_log.song_name, COUNT(*) FROM vote_log LEFT JOIN songs_list ON vote_log.song_name = songs_list.song_name GROUP BY vote_log.song_name').fetchall()
+        resp = self.session.execute('SELECT song_id, vote_log.song_name, COUNT(*) FROM vote_log LEFT JOIN songs_list ON vote_log.song_name = songs_list.song_name GROUP BY vote_log.song_name ORDER BY song_id').fetchall()
         return resp
 
     @exception(logger)
@@ -74,7 +74,7 @@ class SQLOperations():
 
     @exception(logger)
     def recant_vote(self, vote_id):
-        self.session.execute('delete FROM vote_log where vote_id = {}'.format(vote_id))
+        self.session.execute("delete FROM vote_log where vote_id = '{}'".format(vote_id))
         return None
 
  
