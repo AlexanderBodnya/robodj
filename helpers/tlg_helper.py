@@ -1,6 +1,7 @@
 import requests
 import json
 import helpers.database_helper
+from hashlib import md5
 from helpers.log_helper import add_logger, exception
 from helpers.database_helper import SQLOperations
 
@@ -97,52 +98,77 @@ class Messaging(BotHelper):
 
 
     @exception(logger)
-    def command_execute(self, command):
+    def command_execute(self):
         commands = {
             'start': self.start_message,
-            'vote': self.vote,
+            'upvote': self.upvote,
+            'downvote': self.downvote,
             'suggest': self.suggest,
             'get_list': self.get_list,
           }
-        result = commands[command]()
+        command, args = self.get_command()
+        result = commands[command](args)
         return result
 
     @exception(logger)
-    def get_name(self):
+    def get_name(self, *args, **kwargs):
         name = self._json_message['message']['from']['username']
         return name
 
     @exception(logger)
-    def get_user_id(self):
-        id = self._json_message['message']['from']['id']
-        return id
+    def get_user_id(self, *args, **kwargs):
+        _id = self._json_message['message']['from']['id']
+        return _id
 
     @exception(logger)
-    def get_text(self):
+    def get_text(self, *args, **kwargs):
         text = self._json_message['message']['text']
         return text
 
     @exception(logger)
     def get_command(self):
-        words = self.get_text().split()
-        if words[0][0] == '/':
-            return words[0][1:]
-        else:
-            return None
+        text = self.get_text()
+        try:
+            entities = self._json_message['message']['entities']
+            for entity in entities:
+                if entity['type'] == 'bot_command':
+                    return text[entity['offset']:entity['length']], text[entity['length']:].split()
+        except KeyError:
+            pass
+
+    
 
     @exception(logger)
-    def start_message(self):
+    def start_message(self, *args, **kwargs):
         self.sendMessage(self._chat_id, 'welcome message')
 
     @exception(logger)
-    def vote(self):
-        self.sendMessage(self._chat_id, 'Not implemented [vote] method')
+    def upvote(self, *args, **kwargs):
+        self.sendMessage(self._chat_id, 'Not implemented [upvote] method')
 
     @exception(logger)
-    def suggest(self):
-        self.sendMessage(self._chat_id, 'Not implemented [suggest] method')
+    def downvote(self, *args, **kwargs):
+        self.sendMessage(self._chat_id, 'Not implemented [downvote] method')
+
 
     @exception(logger)
-    def get_list(self):
+    def suggest(self, *args, **kwargs):
+        # db = self.database_connect()
+        for arg in args:
+            self.sendMessage(self._chat_id, arg)
+
+    @exception(logger)
+    def get_list(self, *args, **kwargs):
         self.sendMessage(self._chat_id, 'Not implemented [get_list] method')
 
+    @exception(logger)
+    def vote_hash(self, *args):
+        string = ''
+        for arg in args:
+            logger.debug('Arg is {}'.format(arg))
+            string += str(arg)
+
+        hashed = md5(string.encode('utf-8')).hexdigest()
+        logger.debug('String to hash - {}'.format(string))
+        logger.debug('Resulting hash - {}'.format(hashed))
+        return hashed

@@ -12,41 +12,18 @@ logger = add_logger(__name__)
 base = declarative_base()
 
 
-class SuggestedSongsRating(base):
-    __tablename__ = 'suggested_songs_rating'
-
-    song_id = Column(
-        Integer,
-        nullable=False,
-        primary_key=True
-        )
-    song_name = Column(String, nullable=False)
-    votes = Column(Integer, nullable=False)
-
-class VotersList(base):
-    __tablename__ = 'voters_list'
-
-    voter_name = Column(
-        String, 
-        unique=True, 
-        nullable=False, 
-        primary_key=True
-        )
-
 class VoteLog(base):
     __tablename__ = 'vote_log'
 
     vote_id = Column(String, nullable=False)
-    song_id = Column(Integer, ForeignKey('suggested_songs_rating.song_id'), nullable=False)
-    voter_name = Column(String, ForeignKey('voters_list.voter_name'), nullable=False)
+    song_name = Column(String, nullable=False)
+    voter_name = Column(String, nullable=False)
     __table_args__ = (
         Index('ix_vote_id', vote_id),
     )
 
 
 string_to_class = {
-    'SuggestedSongsRating': SuggestedSongsRating,
-    'VotersList': VotersList,
     'VoteLog': VoteLog
 }
 
@@ -76,8 +53,4 @@ class SQLOperations():
         base.metadata.reflect(bind=self.engine)
         base.metadata.drop_all(bind=self.engine)
 
-    @exception(logger)
-    def get_rating(self):
-        resp = self.session.query(SuggestedSongsRating).all()
-        return resp        
-
+ 
