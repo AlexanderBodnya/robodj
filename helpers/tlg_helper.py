@@ -105,9 +105,9 @@ class Messaging(BotHelper):
             '/suggest': self.suggest,
             '/get_list': self.get_list,
           }
-        command, *args = self.get_command()
+        command, args = self.get_command()
         if command:
-            result = commands[command](*args)
+            result = commands[command](args)
             return result
         else:
             return None
@@ -134,7 +134,9 @@ class Messaging(BotHelper):
             entities = self.message['message']['entities']
             for entity in entities:
                 if entity['type'] == 'bot_command':
-                    return text[entity['offset']:entity['length']], text[entity['length']:].split()
+                    command = text[entity['offset']:entity['length']]
+                    args_list = text[entity['length']:].split()
+                    return command, args_list
         except KeyError:
             return None, None
 
