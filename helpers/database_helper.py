@@ -75,6 +75,7 @@ class SQLOperations():
     @exception(logger)
     def recant_vote(self, vote_id):
         self.session.execute("delete FROM vote_log where vote_id = '{}'".format(vote_id))
+        self.session.commit()
         return None
 
  
