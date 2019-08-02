@@ -15,7 +15,7 @@ base = declarative_base()
 class SongsList(base):
     __tablename__ = 'songs_list'
 
-    song_id = Column(Integer, nullable=False, primary_key=True, sqlite_autoincrement=True)
+    song_id = Column(Integer, nullable=False, primary_key=True)
     song_name = Column(String, nullable=False)
 
 
