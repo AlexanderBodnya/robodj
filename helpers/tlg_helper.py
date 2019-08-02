@@ -171,7 +171,7 @@ class Messaging(BotHelper):
         resp = self.db.get_list()
         self.db.destroy_session()
         for item in resp:
-            line = ' {} - Количество голосов: {} \n'.format(str(item[0]), str(item[1]))
+            line = 'Номер: {} - Название: {} - Количество голосов: {} \n'.format(str(item[0]), str(item[1]), str(item[2]))
             text += line
         self.sendMessage(self._chat_id, text)
 

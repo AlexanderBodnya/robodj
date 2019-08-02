@@ -12,12 +12,18 @@ logger = add_logger(__name__)
 
 base = declarative_base()
 
+class SongsList(base):
+    __tablename__ = 'songs_list'
+
+    song_id = Column(Integer, nullable=False, primary_key=True)
+    song_name = Column(String, nullable=False)
+
 
 class VoteLog(base):
     __tablename__ = 'vote_log'
 
     vote_id = Column(String, nullable=False, primary_key=True)
-    song_name = Column(String, nullable=False)
+    song_name = Column(String, ForeignKey('songs_list.song_name'), nullable=False)
     voter_id = Column(String, nullable=False)
     __table_args__ = (
         Index('ix_vote_id', vote_id),
@@ -25,7 +31,8 @@ class VoteLog(base):
 
 
 string_to_class = {
-    'VoteLog': VoteLog
+    'VoteLog': VoteLog,
+    'SongsList': SongsList
 }
 
 class SQLOperations():
@@ -57,7 +64,7 @@ class SQLOperations():
 
     @exception(logger)
     def get_list(self):
-        resp = self.session.execute('SELECT song_name, COUNT(*) FROM vote_log GROUP BY song_name').fetchall()
+        resp = self.session.execute('SELECT song_id, song_name, COUNT(*) FROM vote_log LEFT JOIN songs_list ON vote_log.song_name = songs_list.song_name GROUP BY song_name').fetchall()
         return resp
 
  
