@@ -1,44 +1,83 @@
 import sqlite3
-
-def connect(database):
-    db = sqlite3.connect(database)
-    cur = db.cursor()
-    init_db(cur)
-    db.commit()
-    return cur, db
-
-def init_db(cur):
-    cur.execute(
-        '''CREATE TABLE IF NOT EXISTS users (user_id INTEGER,
-                                             chat_id INTEGER,
-                                             pair_id INTEGER,
-                                             name TEXT,
-                                             nickname TEXT,
-                                             pair_name TEXT,
-                                             PRIMARY KEY(user_id))''')
-
-    cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS `IX_uid` ON `users` ( `user_id` )")
-    cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS `IX_cid` ON `users` ( `chat_id` )")
-    cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS `IX_pid` ON `users` ( `pair_id` )")
-
-    cur.execute(
-        '''CREATE TABLE IF NOT EXISTS history (from_user_id INTEGER,
-                                               to_user_id INTEGER,
-                                               pair_id INTEGER,
-                                               message TEXT,
-                                               from_nickname TEXT,
-                                               to_nickname TEXT,
-                                               created_at TIMESTAMP,
-                                               FOREIGN KEY (from_user_id) REFERENCES users(user_id),
-                                               FOREIGN KEY (to_user_id) REFERENCES users(user_id),
-                                               FOREIGN KEY (pair_id) REFERENCES users(pair_id))''')
-    cur.execute("CREATE INDEX IF NOT EXISTS `IX_fuid` ON `history` ( `from_user_id` )")
-    cur.execute("CREATE INDEX IF NOT EXISTS `IX_tuid` ON `history` ( `to_user_id` )")
-    cur.execute("CREATE INDEX IF NOT EXISTS `IX_pid` ON `history` ( `pair_id` )")
+from helpers.log_helper import add_logger, exception
+from sqlalchemy import Column, String, ForeignKey, Integer, Index, Float, or_, and_
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
 
 
-def store_message(cur, from_user_id, from_nickname, message):
-    cur.execute('INSERT INTO history (from_user_id, from_nickname, message) VALUES(?,?,?)',(from_user_id, from_nickname, message))
+logger = add_logger(__name__)
 
-def add_user(cur, user_id, chat_id, nickname):
-    cur.execute('INSERT OR IGNORE INTO users (user_id, chat_id, nickname) VALUES(?,?,?)',(user_id, chat_id, nickname))
+
+base = declarative_base()
+
+
+class SuggestedSongsRating(base):
+    __tablename__ = 'suggested_songs_rating'
+
+    song_id = Column(
+        Integer,
+        nullable=False,
+        primary_key=True
+        )
+    song_name = Column(String, nullable=False)
+    votes = Column(Integer, nullable=False)
+
+class VotersList(base):
+    __tablename__ = 'voters_list'
+
+    voter_name = Column(
+        String, 
+        unique=True, 
+        nullable=False, 
+        primary_key=True
+        )
+
+class VoteLog(base):
+    __tablename__ = 'vote_log'
+
+    vote_id = Column(String, nullable=False)
+    song_id = Column(Integer, ForeignKey('suggested_songs_rating.song_id'), nullable=False)
+    voter_name = Column(String, ForeignKey('voters_list.voter_name'), nullable=False)
+    __table_args__ = (
+        Index('ix_vote_id', vote_id),
+    )
+
+
+string_to_class = {
+    'SuggestedSongsRating': SuggestedSongsRating,
+    'VotersList': VotersList,
+    'VoteLog': VoteLog
+}
+
+class SQLOperations():
+
+    def __init__(self, db_url):
+        self.engine = create_engine(db_url)
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
+    @exception(logger)
+    def destroy_session(self):
+        self.session.close()
+
+    @exception(logger)
+    def add_data(self, tablename, **kwargs):
+        __data__ = string_to_class[tablename](**kwargs)
+        self.session.merge(__data__)
+        self.session.commit()
+
+    @exception(logger)
+    def create_database(self):
+        base.metadata.create_all(bind=self.engine)
+
+    @exception(logger)
+    def drop_database(self):
+        base.metadata.reflect(bind=self.engine)
+        base.metadata.drop_all(bind=self.engine)
+
+    @exception(logger)
+    def get_rating(self):
+        resp = self.session.query(SuggestedSongsRating).all()
+        return resp        
+

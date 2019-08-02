@@ -3,3 +3,4 @@ venv/
 .vscode/settings.json
 helpers/__pycache__/
 configs/__pycache__/
+examples.txt

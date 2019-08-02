@@ -1,7 +1,10 @@
 import requests
 import json
 import helpers.database_helper
+from helpers.log_helper import add_logger, exception
 
+
+logger = add_logger(__name__)
 
 class BotHelper:
     # Here we are initializang instance of our bot. It does nothing except stores bot token
@@ -9,6 +12,7 @@ class BotHelper:
         self.token = token
 
     # This is serialized api request. It is separated from api methods because DNRY(do not repeat yourself)
+    @exception(logger)
     def api_request(self, method_name, payload={}):
         url = 'https://api.telegram.org/bot' + self.token + '/' + method_name
         # Here we are separating setWebhook method from other methods.
@@ -30,6 +34,7 @@ class BotHelper:
     # This is API method to set webhook. It doesn't have required options, however if you want it to work
     # you need to specify url(this is url on which Telegram will send messages), and path to cert file,
     # in case you are using self-signed certificate
+    @exception(logger)
     def setWebhook(self, url=None, cert=None, max_connections=None, allowed_updates=None, **kwargs):
         payload = {
             'url': (None, url)
@@ -47,21 +52,25 @@ class BotHelper:
         return result
 
     # This is API method which deletes webhook. It doesn't require any parameters.
+    @exception(logger)
     def deleteWebhook(self):
         result = self.api_request('deleteWebhook')
         return result
 
     # This is API method which returns information about bot. It doesn't require any parameters
+    @exception(logger)
     def getMe(self):
         result = self.api_request('getMe')
         return result
 
     # This is API method which returns information about webhook. It doesn't require any parameters
+    @exception(logger)
     def getWebhookInfo(self):
         result = self.api_request('getWebhookInfo')
         return result
 
     # This is API method to send messages. It requires chat_id and text of the message
+    @exception(logger)
     def sendMessage(self, chat_id, text):
         payload = {
             'chat_id': chat_id,
@@ -81,6 +90,7 @@ class Messaging(BotHelper):
         self.cur = kwargs.get('cur', None)
         self.database = kwargs.get('database', None)
 
+    @exception(logger)
     def command_execute(self, command):
         commands = {
             'start': self.start_message,
@@ -96,18 +106,22 @@ class Messaging(BotHelper):
     #     chat_id = self._json_message['message']['chat']['id']
     #     return chat_id
 
+    @exception(logger)
     def get_name(self):
         name = self._json_message['message']['from']['username']
         return name
 
+    @exception(logger)
     def get_user_id(self):
         id = self._json_message['message']['from']['id']
         return id
 
+    @exception(logger)
     def get_text(self):
         text = self._json_message['message']['text']
         return text
 
+    @exception(logger)
     def get_command(self):
         words = self.get_text().split()
         if words[0][0] == '/':
@@ -115,18 +129,23 @@ class Messaging(BotHelper):
         else:
             return None
 
+    @exception(logger)
     def start_message(self):
         self.sendMessage(self._chat_id, 'welcome message')
 
+    @exception(logger)
     def return_chat_id(self):
         self.sendMessage(self._chat_id, self._chat_id)
 
+    @exception(logger)
     def return_name(self):
         self.sendMessage(self._chat_id, self.get_name())
 
+    @exception(logger)
     def return_user_id(self):
         self.sendMessage(self._chat_id, self.get_user_id())
 
+    @exception(logger)
     def get_users(self):
         self.cur.execute('SELECT * FROM users')
         results = self.cur.fetchall()

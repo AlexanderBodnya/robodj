@@ -2,20 +2,18 @@ import flask
 import json
 import helpers.tlg_helper as tlg
 import configs.config as conf
-import helpers.rmq_helper as q_helper
-import logging
+from helpers.log_helper import add_logger, exception
+
+logger = add_logger(__name__)
 
 app = flask.Flask(__name__)
 bot = tlg.BotHelper(conf.TOKEN)
 
-global channel
-queue = 'bot_inbox'
-
-
 @app.route('/soul_queue', methods=['POST'])
 def on_message():
-    print('GOT SOMETHING')
-    logging.error('Message is {}'.format(flask.request.get_json()))
+
+    body = flask.request.get_json()
+    print(" [x] Received %r" % body)
     return ('OK', 200)
 
 

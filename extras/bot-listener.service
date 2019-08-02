@@ -6,8 +6,8 @@ After=network.target
 Restart=always
 RestartSec=3
 SyslogIdentifier=bot-logic
-WorkingDirectory=/var/lib/soulbot
-ExecStart=/usr/bin/python3 /var/lib/soulbot/listener.py
+WorkingDirectory=/var/lib/robodj
+ExecStart=/usr/bin/python3 /var/lib/robodj/listener.py
 
 [Install]
 WantedBy=multi-user.target
