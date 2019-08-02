@@ -167,11 +167,11 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def get_list(self, *args, **kwargs):
-        text = ''
+        text = 'Список песен в голосовании:\n'
         resp = self.db.get_list()
         self.db.destroy_session()
         for item in resp:
-            line = ' - '.join(item) + '\n'
+            line = ' {} - Количество голосов: {} \n'.format(str(item[0]), str(item[1]))
             text += line
         self.sendMessage(self._chat_id, text)
 
