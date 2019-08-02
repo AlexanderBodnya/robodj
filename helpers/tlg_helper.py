@@ -131,7 +131,7 @@ class Messaging(BotHelper):
             entities = self.message['message']['entities']
             for entity in entities:
                 if entity['type'] == 'bot_command':
-                    return text[entity['offset']:entity['length']], text[entity['length']:].split()
+                    return text[entity['offset']:entity['length']], text[entity['length']:]
         except KeyError:
             pass
 
