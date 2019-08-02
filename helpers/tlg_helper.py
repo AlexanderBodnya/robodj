@@ -111,24 +111,24 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def get_name(self, *args, **kwargs):
-        name = self._json_message['message']['from']['username']
+        name = self.message['message']['from']['username']
         return name
 
     @exception(logger)
     def get_user_id(self, *args, **kwargs):
-        _id = self._json_message['message']['from']['id']
+        _id = self.message['message']['from']['id']
         return _id
 
     @exception(logger)
     def get_text(self, *args, **kwargs):
-        text = self._json_message['message']['text']
+        text = self.message['message']['text']
         return text
 
     @exception(logger)
     def get_command(self):
         text = self.get_text()
         try:
-            entities = self._json_message['message']['entities']
+            entities = self.message['message']['entities']
             for entity in entities:
                 if entity['type'] == 'bot_command':
                     return text[entity['offset']:entity['length']], text[entity['length']:].split()
