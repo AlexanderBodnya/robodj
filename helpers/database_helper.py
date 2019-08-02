@@ -67,4 +67,9 @@ class SQLOperations():
         resp = self.session.execute('SELECT song_id, vote_log.song_name, COUNT(*) FROM vote_log LEFT JOIN songs_list ON vote_log.song_name = songs_list.song_name GROUP BY vote_log.song_name').fetchall()
         return resp
 
+    @exception(logger)
+    def get_song_name_by_id(self, song_id):
+        resp = self.session.execute('SELECT song_name FROM songs_list where song_id = {}'.format(song_id)).fetchone()
+        return resp
+
  

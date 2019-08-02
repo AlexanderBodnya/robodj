@@ -148,6 +148,9 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def upvote(self, *args, **kwargs):
+        if isinstance(args[0][0], int):
+            resp = self.db.get_song_name_by_id(args[0][0])
+        logger.info('Song name is {}'.format(resp))
         self.sendMessage(self._chat_id, 'Not implemented [upvote] method')
 
     @exception(logger)
@@ -173,7 +176,7 @@ class Messaging(BotHelper):
         self.db.destroy_session()
         if resp:
             for item in resp:
-                line = 'Номер: {} - Название: {} - Количество голосов: {} \n'.format(str(item[0]), str(item[1]), str(item[2]))
+                line = '№ {} - {} - Количество голосов: {} \n'.format(str(item[0]), str(item[1]), str(item[2]))
                 text += line
         else:
             text = 'Список голосования пуст!'
