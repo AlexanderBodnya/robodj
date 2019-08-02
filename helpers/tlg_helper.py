@@ -104,6 +104,11 @@ class Messaging(BotHelper):
             '/recant_vote': self.recant_vote,
             '/suggest': self.suggest,
             '/get_list': self.get_list,
+            '/start@robodj_bot': self.start_message,
+            '/upvote@robodj_bot': self.upvote,
+            '/recant_vote@robodj_bot': self.recant_vote,
+            '/suggest@robodj_bot': self.suggest,
+            '/get_list@robodj_bot': self.get_list
           }
         command, args = self.get_command()
         if command:
