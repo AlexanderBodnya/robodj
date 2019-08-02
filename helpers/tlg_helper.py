@@ -87,8 +87,7 @@ class Messaging(BotHelper):
     def __init__(self, token, message, database_url):
         super(Messaging, self).__init__(token)
         self.message = message
-        self._json_message = json.loads(message.decode('utf-8'))
-        self._chat_id = self._json_message['message']['chat']['id']
+        self._chat_id = self.message['message']['chat']['id']
         self.db_url = database_url
         
 
