@@ -144,7 +144,7 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def start_message(self, *args, **kwargs):
-        self.sendMessage(self._chat_id, 'welcome message')
+        self.sendMessage(self._chat_id, 'Вас привествует бот для предложения песен на афтерпати! Для того чтобы узнать какие песни уже успели предложить воспользуйтесь командой:\n\t/get_list\nДля того чтобы предложить свою песню воспользуйтесь командой:\n\t/suggest Название Песни\nДля того чтобы проголосовать за песню из списк воспользуйтесь командой:\n\t/upvote <порядковый номер песни>\nДля того чтобы отозвать свой голос воспользуйтесь командой:\n\t/recant_vote <порядкоый номер песни>\nЕсли за песню не будет одного голоса она автоматически пропадет из списка!')
 
     @exception(logger)
     def upvote(self, *args, **kwargs):
