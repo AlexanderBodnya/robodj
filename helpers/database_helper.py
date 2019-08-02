@@ -15,7 +15,7 @@ base = declarative_base()
 class VoteLog(base):
     __tablename__ = 'vote_log'
 
-    vote_id = Column(String, nullable=False)
+    vote_id = Column(String, nullable=False, primary_key=True)
     song_name = Column(String, nullable=False)
     voter_name = Column(String, nullable=False)
     __table_args__ = (
