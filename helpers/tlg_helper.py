@@ -73,14 +73,24 @@ class BotHelper:
 
     # This is API method to send messages. It requires chat_id and text of the message
     @exception(logger)
-    def sendMessage(self, chat_id, text):
+    def sendMessage(self, chat_id, text, **kwargs):
         payload = {
             'chat_id': chat_id,
             'text': text
         }
+        payload.update(kwargs)
         result = self.api_request('sendMessage', payload)
         return result
 
+    @exception(logger)
+    def forwardMessage(self, chat_id, from_chat_id, message_id):
+        payload = {
+            'chat_id': chat_id,
+            'from_chat_id': from_chat_id,
+            'message_id': message_id
+        }
+        result = self.api_request('forwardMessage', payload)
+        return result
 
 class Messaging(BotHelper):
 
@@ -100,15 +110,15 @@ class Messaging(BotHelper):
     def command_execute(self):
         commands = {
             '/start': self.start_message,
-            '/upvote': self.upvote,
-            '/recant_vote': self.recant_vote,
-            '/suggest': self.suggest,
-            '/get_list': self.get_list,
-            '/start@robodj_bot': self.start_message,
-            '/upvote@robodj_bot': self.upvote,
-            '/recant_vote@robodj_bot': self.recant_vote,
-            '/suggest@robodj_bot': self.suggest,
-            '/get_list@robodj_bot': self.get_list
+            # '/upvote': self.upvote,
+            # '/recant_vote': self.recant_vote,
+            # '/suggest': self.suggest,
+            # '/get_list': self.get_list,
+            # '/start@robodj_bot': self.start_message,
+            # '/upvote@robodj_bot': self.upvote,
+            # '/recant_vote@robodj_bot': self.recant_vote,
+            # '/suggest@robodj_bot': self.suggest,
+            # '/get_list@robodj_bot': self.get_list
           }
         command, args = self.get_command()
         if command:
@@ -131,6 +141,14 @@ class Messaging(BotHelper):
     def get_text(self, *args, **kwargs):
         text = self.message['message']['text']
         return text
+    
+    @exception(logger)
+    def get_message_id(self, *args, **kwargs):
+        try:
+            message_id = self.message['message']['message_id']
+        except:
+            message_id = self.message['edited_message']['message_id']
+        return message_id
 
     @exception(logger)
     def get_command(self):
@@ -149,7 +167,7 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def start_message(self, *args, **kwargs):
-        self.sendMessage(self._chat_id, 'Вас привествует бот для предложения песен на афтапати! Для того, чтобы узнать, какие песни уже успели предложить, воспользуйтесь командой:\n\t/get_list\nДля того, чтобы предложить свою песню, воспользуйтесь командой:\n\t/suggest Название Песни\nДля того, чтобы проголосовать за песню из списка воспользуйтесь командой:\n\t/upvote <порядковый номер песни>\nДля того, чтобы отозвать свой голос, воспользуйтесь командой:\n\t/recant_vote <порядковый номер песни>\nЕсли за песню не будет одного голоса, она автоматически пропадет из списка!')
+        self.sendMessage(self._chat_id, 'Вас привествует бот для предложения песен на афтапати! Отправьте мне свое предложение - название песни или саму песню, чтобы она попала в список на рассмотрение.')
 
     @exception(logger)
     def upvote(self, *args, **kwargs):
@@ -224,3 +242,8 @@ class Messaging(BotHelper):
         logger.debug('String to hash - {}'.format(string))
         logger.debug('Resulting hash - {}'.format(hashed))
         return hashed
+
+    @exception(logger)
+    def resend(self, chat_id):
+        self.forwardMessage(self._chat_id, chat_id, self.get_message_id())
+        self.sendMessage(self._chat_id, 'Ваше сообщение отправлено!')

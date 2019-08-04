@@ -16,6 +16,7 @@ def on_message():
     print(" [x] Received %r" % body)
     msg = tlg.Messaging(conf.TOKEN, body, conf.DATABASE)
     msg.command_execute()
+    msg.resend(conf.TO_CHAT_ID)
     return ('OK', 200)
 
 
