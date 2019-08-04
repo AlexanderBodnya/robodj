@@ -98,12 +98,15 @@ class Messaging(BotHelper):
         super(Messaging, self).__init__(token)
         self.message = message
         logger.info('Message is {}'.format(message))
-        try:
+        if 'message' in message:
             self._chat_id = self.message['message']['chat']['id']
-        except:
+            self.message = self.message['message']
+        elif 'edited_message' in message:
             self._chat_id = self.message['edited_message']['chat']['id']
-        except:
+            self.message = self.message['edited_message']
+        elif: 'channel_post' in message:
             self._chat_id = self.message['channel_post']['chat']['id']
+            self.message = self.message['channel_post']
         self.db =  SQLOperations(database_url)
         
 
@@ -132,32 +135,29 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def get_name(self, *args, **kwargs):
-        name = self.message['message']['from']['username']
+        name = self.message['from']['username']
         return name
 
     @exception(logger)
     def get_user_id(self, *args, **kwargs):
-        _id = self.message['message']['from']['id']
+        _id = self.message['from']['id']
         return _id
 
     @exception(logger)
     def get_text(self, *args, **kwargs):
-        text = self.message['message']['text']
+        text = self.message['text']
         return text
     
     @exception(logger)
     def get_message_id(self, *args, **kwargs):
-        try:
-            message_id = self.message['message']['message_id']
-        except:
-            message_id = self.message['edited_message']['message_id']
+        message_id = self.message['message_id']
         return message_id
 
     @exception(logger)
     def get_command(self):
         try:
             text = self.get_text()
-            entities = self.message['message']['entities']
+            entities = self.message['entities']
             for entity in entities:
                 if entity['type'] == 'bot_command':
                     command = text[entity['offset']:entity['length']]
