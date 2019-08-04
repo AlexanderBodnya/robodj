@@ -97,6 +97,7 @@ class Messaging(BotHelper):
     def __init__(self, token, message, database_url):
         super(Messaging, self).__init__(token)
         self.message = message
+        logger.info('Message is {}'.format(message))
         try:
             self._chat_id = self.message['message']['chat']['id']
         except KeyError:
