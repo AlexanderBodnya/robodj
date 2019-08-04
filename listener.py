@@ -15,8 +15,8 @@ def on_message():
     body = flask.request.get_json()
     print(" [x] Received %r" % body)
     msg = tlg.Messaging(conf.TOKEN, body, conf.DATABASE)
-    msg.command_execute()
-    msg.resend(conf.TO_CHAT_ID)
+    if not msg.command_execute():
+        msg.resend(conf.TO_CHAT_ID)
     return ('OK', 200)
 
 
