@@ -127,11 +127,10 @@ class Messaging(BotHelper):
             # '/get_list@robodj_bot': self.get_list
           }
         command, args = self.get_command()
-        if command:
-            result = commands[command](args)
-            return None
-        else:
-            return 0
+        if command in commands:
+            commands[command](args)
+
+      
 
     @exception(logger)
     def get_name(self, *args, **kwargs):
