@@ -129,6 +129,9 @@ class Messaging(BotHelper):
         command, args = self.get_command()
         if command in commands:
             commands[command](args)
+            return 1
+        else:
+            return 0
 
       
 
@@ -247,5 +250,6 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def resend(self, chat_id):
-        self.forwardMessage(chat_id, self._chat_id, self.get_message_id())
-        self.sendMessage(self._chat_id, 'Ваше сообщение отправлено!')
+        if self.command_execute() == 0:
+            self.forwardMessage(chat_id, self._chat_id, self.get_message_id())
+            self.sendMessage(self._chat_id, 'Ваше сообщение отправлено!')
