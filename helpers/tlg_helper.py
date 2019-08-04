@@ -104,7 +104,7 @@ class Messaging(BotHelper):
         elif 'edited_message' in message:
             self._chat_id = self.message['edited_message']['chat']['id']
             self.message = self.message['edited_message']
-        elif: 'channel_post' in message:
+        elif 'channel_post' in message:
             self._chat_id = self.message['channel_post']['chat']['id']
             self.message = self.message['channel_post']
         self.db =  SQLOperations(database_url)
