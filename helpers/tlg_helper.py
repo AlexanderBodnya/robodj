@@ -100,9 +100,9 @@ class Messaging(BotHelper):
         logger.info('Message is {}'.format(message))
         try:
             self._chat_id = self.message['message']['chat']['id']
-        except KeyError:
+        except:
             self._chat_id = self.message['edited_message']['chat']['id']
-        except KeyError:
+        except:
             self._chat_id = self.message['channel_post']['chat']['id']
         self.db =  SQLOperations(database_url)
         
