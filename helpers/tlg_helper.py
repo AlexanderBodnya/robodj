@@ -152,8 +152,8 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def get_command(self):
-        text = self.get_text()
         try:
+            text = self.get_text()
             entities = self.message['message']['entities']
             for entity in entities:
                 if entity['type'] == 'bot_command':
