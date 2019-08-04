@@ -129,9 +129,9 @@ class Messaging(BotHelper):
         command, args = self.get_command()
         if command:
             result = commands[command](args)
-            return result
-        else:
             return None
+        else:
+            return 0
 
     @exception(logger)
     def get_name(self, *args, **kwargs):
@@ -171,7 +171,6 @@ class Messaging(BotHelper):
     @exception(logger)
     def start_message(self, *args, **kwargs):
         self.sendMessage(self._chat_id, 'Вас привествует бот для предложения песен на афтапати! Отправьте мне свое предложение - название песни или саму песню, чтобы она попала в список на рассмотрение.')
-        return 0
 
     @exception(logger)
     def upvote(self, *args, **kwargs):
