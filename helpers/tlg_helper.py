@@ -248,5 +248,5 @@ class Messaging(BotHelper):
 
     @exception(logger)
     def resend(self, chat_id):
-        self.forwardMessage(self._chat_id, chat_id, self.get_message_id())
+        self.forwardMessage(chat_id, self._chat_id, self.get_message_id())
         self.sendMessage(self._chat_id, 'Ваше сообщение отправлено!')
